@@ -235,16 +235,129 @@ Github上的代码如下： [https://github.com/tugenhua0707/webpack/](https://g
 
 ### 三：理解webpack加载器
 
+Webpack提供了一套加载器，比如css-loader,less-loader,style-loader，url-loader等，用于将不同的文件加载到js文件中，比如url-loader用于在js中加载png/jpg格式的图片文件，css/style loader用于加载css文件，less-loader加载器是将less编译成css文件；
 
+**配置加载器**
 
+	module.exports = {
+	  entry: "./src/main.js",
+	  output: {
+	    filename: "build.js",
+	    path: __dirname + '/assets/',
+	    publicPath: "/assets/"
+	  },
+	  module: {
+	    loaders: [
+	      {test: /.css$/, loader: 'style!css'},
+	      {test: /.(png|jpg)$/, loader: 'url-loader?limit=8192'}
+	    ]
+	  }
+	  resolve: {
+	extensions: ['', '.js', '.jsx'],
+	//模块别名定义，方便后续直接引用别名，无须多写长长的地址
+	alias: {
+	    a : 'js/assets/a.js',  // 后面直接引用 require(“a”)即可引用到模块
+	    b : 'js/assets/b.js',
+	    c : 'js/assets/c.js'
+	}
+	  },
+	  plugins: [commonsPlugin, new ExtractTextPlugin("[name].css")]
+	}
 
+**module.loader**: 其中test是正则表达式，对符合的文件名使用相应的加载器. 
 
+/.css$/会匹配 xx.css文件，但是并不适用于xx.sass或者xx.css.zip文件.
 
+**url-loader**： 它会将样式中引用到的图片转为模块来处理; 配置信息的参数“?limit=8192”表示将所有小于8kb的图片都转为base64形式。
 
+**entry**： 模块的入口文件。依赖项数组中所有的文件会按顺序打包，每个文件进行依赖的递归查找，直到所有模块都被打成包；
 
+**output**：模块的输出文件，其中有如下参数：
 
+**filename**: 打包后的文件名
 
+**path**: 打包文件存放的绝对路径。
 
+**publicPath**: 网站运行时的访问路径。
+
+**relolve.extensions**: 自动扩展文件的后缀名，比如我们在require模块的时候，可以不用写后缀名的。
+
+**relolve.alias**: 模块别名定义，方便后续直接引用别名，无须多写长长的地址
+
+**plugins**：是插件项;
+
+### 四：理解less-loader加载器的使用
+
+我们先来理解下less-loader加载器，其他的sass-loader也是一个意思，这边不会对所有的预处理的css做讲解，less-loader加载器是把css代码转化到style标签内，动态插入到head标签内；我们先来看看我项目的结构如下：
+
+![webpack] (../images/16.1.3img1.png)
+
+我们现在css文件下有一个main.less 代码如下：
+
+	@base: #f938ab;
+		html,body {
+		  background:@base;
+	}
+
+Src文件下有一个main.js文件 此js文件时入口文件；里面的代码如下：
+
+	// css
+	
+	require('../css/main.less');
+
+**webpack.config.js 代码配置如下：**
+
+	module.exports = {
+	  entry: "./src/main.js",
+	  output: {
+	    filename: "build.js",
+	    path: __dirname
+	  },
+	  module: {
+	    loaders: [
+	      //.css 文件使用 style-loader 和 css-loader 来处理
+	      {
+	        test: /\.less$/,
+	        loader: "style!css!less"
+	      }
+	    ]
+	  },
+	  resolve: {
+	    extensions: ['', '.js', '.jsx']
+	  },
+	  plugins: []
+	};
+
+Gulpfile.js代码如下(注意：这边既可以需要此文件使用gulp进行运行打包，也可以不需要此文件，直接使用webpack进行打包；二种方式任选其一)。
+
+	var gulp = require('gulp');
+	var webpack = require("gulp-webpack");
+	var webpackConfig = require("./webpack.config.js");
+	
+	gulp.task('webpack', function () {
+	    var myConfig = Object.create(webpackConfig);
+	    return gulp
+	        .src('./src/main.js')
+	        .pipe(webpack(myConfig))
+	        .pipe(gulp.dest('./build'));
+	});
+	
+	// 注册缺省任务
+	gulp.task('default', ['webpack']);
+
+因此我们需要安装 style-loader css-loader 和 less-loader 如下所示：
+
+![webpack] (../images/16.1.3img2.png)
+
+安装完成后，我们查看我们的项目的根目录node_modules下多了如下几个文件：
+
+![webpack] (../images/16.1.3img3.png)
+
+如上配置后，我们进入项目后 运行下 gulp或者 webpack命令既可，在build文件夹内会生成build.js，此JS是动态生成style标签并解释正常的css插入到文档head标签内；我们可以运行下页面，查看代码看下如下：
+
+![webpack] (../images/16.1.3img4.png)
+
+因此我们可以看到页面生效了；为了更好的demo测试，我把代码放到如下github上，自己可以下载下来运行下既可： [https://github.com/tugenhua0707/webpack-less-loader](https://github.com/tugenhua0707/webpack-less-loader)
 
 
 
