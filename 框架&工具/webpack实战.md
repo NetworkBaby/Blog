@@ -359,12 +359,305 @@ Gulpfile.js代码如下(注意：这边既可以需要此文件使用gulp进行�
 
 因此我们可以看到页面生效了；为了更好的demo测试，我把代码放到如下github上，自己可以下载下来运行下既可： [https://github.com/tugenhua0707/webpack-less-loader](https://github.com/tugenhua0707/webpack-less-loader)
 
+### 五：理解babel-loader加载器的含义
 
+babel-loader加载器能将ES6的代码转换成ES5代码，这使我们现在可以使用ES6了；我们在使用之前，我们需要安装babel-loader
 
+执行命令：npm install babel-loader –save-dev 如下所示：
 
+![webpack] (../images/16.1.6img1.png)
 
+如上安装完后，我们在根目录node_modules会生成文件，如下所示：
 
+![webpack] (../images/16.1.6img2.png)
 
+现在我们可以在webpack.config.js里面moudle.loaders配置加载器了，如下代码：
 
+{test: /\.js$/, loader: 'babel', exclude: '/node_modules/'} 
 
+因此webpack.config.js代码变成如下：
 
+	// 使用webpack打包
+	module.exports = {
+	  entry: "./src/main.js",
+	  output: {
+	    filename: "build.js",
+	    path: __dirname
+	  },
+	  module: {
+	    loaders: [
+	      {test: /\.js$/, loader: 'babel', exclude: '/node_modules/'}
+	    ]
+	  },
+	  resolve: {
+	    extensions: ['', '.js', '.jsx']
+	  },
+	  plugins: []
+	};
+
+下面我们再来看看我项目中的目录结构如下：
+
+![webpack] (../images/16.1.6img3.png)
+
+我们在看看src源文件有下面几个文件:
+
+![webpack] (../images/16.1.6img4.png)
+
+React.min.js是react源码，这个不多说，bind.js的ES6的代码如下：
+
+	// es6的语法 let LOADER = true; module.exports = LOADER;
+
+main.js 是页面的入口文件；代码如下：
+
+	let loader = require('./bind');
+	console.log(loader);
+
+let是ES6的语法 相当于js中的var定义变量的含义； 接着打印下bind模块中 打印为true；
+
+最后执行gulp如下：
+
+![webpack] (../images/16.1.6img5.png)
+
+在控制台中打印true；我把源码放在github上，有需要的同学可以自己下载下来运行下即可；如下github(我2年没有使用github，现在重新使用，为了更好的演示demo问题)； [https://github.com/tugenhua0707/webpack-babel-loader](https://github.com/tugenhua0707/webpack-babel-loader)
+
+### 六：了解下webpack的几个命令
+
+- webpack         // 最基本的启动webpack的方法
+- webpack -w      // 提供watch方法；实时进行打包更新
+- webpack -p      // 对打包后的文件进行压缩
+- webpack -d      // 提供source map，方便调式代码
+
+我们下面来了解下 `webpack -w`
+
+如下所示：
+
+![webpack] (../images/16.1.6img6.png)
+
+比如我在js文件里面随便增加一点代码后，保存后，再刷新页面即可可以看到代码生效了，无需重新运行webpack或者gulp，使用`webpack -w` 可以实时打包。 `webpack -p` 的含义是对进行打包后的文件进行压缩代码；比如我在之前使用chrome看打包后的代码如下：
+
+![webpack] (../images/16.1.6img7.png)
+
+如上可以看到，代码是未压缩的，但是当我在控制台命令行中运行 `webpack -p` 命令后，如下所示：
+
+![webpack] (../images/16.1.6img8.png)
+
+我们现在再到控制台上看下代码变成已经压缩后的代码了，如下所示：
+
+![webpack] (../images/16.1.6img9.png)
+
+`webpack  -d` 是提供未压缩之前的源码 方便代码中的调式；如下所示：
+
+![webpack] (../images/16.1.6img10.png)
+
+当我运行如上所示后，我们再来看看刚才已经压缩后的代码变成什么样子呢？如下所示：
+
+![webpack] (../images/16.1.6img11.png)
+
+如上代码可以看到 我们进行压缩后的代码，通过运行 `webpack -d` 命令后，即可还原未压缩的代码，这样的话就可以方便我们线上调式代码了。
+
+我们再来看看目录下 会生成map文件，如下所示：
+
+![webpack] (../images/16.1.6img12.png)
+
+### 七：webpack对多个模块依赖进行打包
+
+   通过一刚开始我们了解到 webpack支持commonJS和AMD两种模块机制进行打包，因此我们现在来针对代码中使用commonJS和AMD机制进行做一个demo；
+
+Src源文件增加module1.js module2.js module3.js 代码分别如下：
+
+	module1.js 代码：
+	// module1.js
+	require(["./module3"], function(){
+	    console.log("Hello Webpack!");
+	});
+	
+	Module2.js代码如下：
+	// module2.js，使用的是CommonJs机制导出包
+	module.exports = function(a, b){
+	    return a + b;
+	}
+	
+	Module3.js代码使用AMD机制
+	
+	// module3.js，使用AMD模块机制
+	define(['./module2.js'], function(sum){
+	    return console.log("1 + 2 = " + sum(1, 2));
+	});
+	 // 入口文件 main.js 代码如下：
+	 require("./module1");
+
+我们可以运行下 webpack后 在根目录下生成如下文件：
+
+![webpack] (../images/16.1.6img13.png)
+
+其中1.build文件夹是commonJS生成的 里面是commonJS的代码；我们再查看页面的代码如下可以看到：
+
+![webpack] (../images/16.1.6img14.png)
+
+我们继续查看控制台输出如下：
+
+![webpack] (../images/16.1.6img15.png)
+
+为止我们可以看到webpack打包可以支持commonJS模块和AMD模块。
+
+具体的代码 可以查看我的github上的源码：
+
+[https://github.com/tugenhua0707/webpack-multi-module-depend](https://github.com/tugenhua0707/webpack-multi-module-depend)
+
+### 八：如何独立打包成样式文件
+
+有时候我们不想把样式打在脚本中，而是想独立css出来，然后在页面上外链css，这时候我们需要 `extract-text-webpack-plugin` 来帮忙：我们首先需要安装 extract-text-webpack-plugin：如下： `npm install extract-text-webpack-plugin –save-dev` 如下所示：
+
+![webpack] (../images/16.1.6img16.png)
+
+然后在目录下会生成如下：
+
+![webpack] (../images/16.1.6img17.png)
+
+现在我们需要看看webpack.config.js 配置变成如下：
+
+	var ExtractTextPlugin = require("extract-text-webpack-plugin");
+	// 使用webpack打包
+	module.exports = {
+	  entry: "./src/main.js",
+	  output: {
+	    filename: "build.js"
+	  },
+	  module: {
+	    loaders: [
+	      //.css 文件使用 style-loader 和 css-loader 来处理
+	      {
+	        test: /\.less$/,
+	        loader: ExtractTextPlugin.extract(
+	            'css?sourceMap!' +
+	            'less?sourceMap'
+	        )
+	      }
+	    ]
+	  },
+	  resolve: {
+	    extensions: ['', '.js', '.jsx']
+	  },
+	  // 内联css提取到单独的styles的css
+	  plugins: [new ExtractTextPlugin('styles.css')]
+	};
+	
+配置完成后 我们gulp运行下即可，在build文件夹内会生成2个文件，一个是build.js 处理模块的文件 另一个就是我们的styles.css了；我们查看下如下所示：
+
+![webpack] (../images/16.1.6img18.png)
+
+接着在html文件这样引入即可：
+
+	<!doctype html>
+	<html lang="en">
+	 <head>
+	  <meta charset="UTF-8">
+	  <title>Document</title>
+	  <script src="src/react.min.js"></script>
+	  <link rel="stylesheet" href="build/styles.css"/>
+	 </head>
+	 <body>
+	    <div id="content"></div>
+	    
+	 </body>
+	</html>
+
+在页面上运行以下；即可看到效果：我们可以看下请求数：
+
+![webpack] (../images/16.1.6img19.png)
+
+具体的代码demo可以看我的github 如下：
+
+[https://github.com/tugenhua0707/extract-text-webpack-plugin](https://github.com/tugenhua0707/extract-text-webpack-plugin)
+
+注意：node_modules模块没有上传上去，git上传不上去，老是提示Filename too long的错误，所以就没有上传，需要自己在本地安装如下模块：
+
+![webpack] (../images/16.1.6img20.png)
+
+### 九：如何打包成多个资源文件
+
+我们在开发页面的时候，有时候需要有多个入口文件，做到文件是按需加载，这样就可以使用缓存提升性能；那么我们接下来需要如何配置呢？现在我们继续做demo，现在比如我现在的项目文件结构如下：
+
+![webpack] (../images/16.1.6img21.png)
+
+我们直接看 webpack.config.js配置代码变成如下：
+
+	module.exports = {
+	  entry: {
+	     "main": "./src/main.js",
+	     "index": "./src/index.js"
+	  },
+	  output: {
+	    filename: "[name].bundle.js"
+	  }
+	};
+
+从上面的配置代码我们可以看到 entry现在变成了一个对象了，而对象名也就是key会作为下面output的filename属性的[name]。当然entry也可以是一个数组。
+
+因此我们直接 gulp运行下即可 在build文件下 生成2个入口文件 如上面的截图所示：github源码地址如下：
+
+[https://github.com/tugenhua0707/webpack-many-page](https://github.com/tugenhua0707/webpack-many-page) 
+
+现在我们可以根据不同的页面 引入不同的入口文件，实现按需加载文件。
+
+### 十：关于对图片的打包
+
+我们知道图片是使用url-loader来加载的，我们既可以在css文件里url的属性；如下：
+
+	#content{
+	    width:170px;
+	    height:60px;
+	    background:url('../images/1.jpg') no-repeat;
+	}
+
+我们还可以直接对元素的src属性进行require赋值。如下代码：
+
+	var img = document.createElement("img"); 
+	img.src = require("../image/1.jpg"); 
+	document.body.appendChild(img);
+
+我这边直接来讲第一种在css文件里的url属性进行打包；
+
+首先来看看我项目的目录结构如下：
+
+![webpack] (../images/16.1.6img22.png)
+
+Css文件 main.css代码如下：
+
+	#content{
+	    width:170px;
+	    height:60px;
+	    background:url('../images/1.jpg') no-repeat;
+	}
+
+JS文件main.js代码如下：
+
+	require('../css/main.css');
+
+Webpack.config.js配置文件代码如下：
+
+	// 使用webpack打包
+	module.exports = {
+	  
+	  entry: {
+	     "main": "./src/main.js"
+	  },
+	  output: {
+	    path: './build/',
+	    filename: "build.js"
+	  },
+	  module: {
+	    loaders: [
+	      {test: /.css$/, loader: 'style!css'},
+	      {test: /.(png|jpg)$/, loader: 'url?limit=8192'}
+	    ]
+	  }
+	};
+
+直接运行webpack 可以生成build目录，build目录下会生成2个文件 一个是图片打包后，另外一个是build.js。接着我们再在页面运行下页面，发现有一个问题，如下：
+
+![webpack] (../images/16.1.6img23.png)
+
+页面调用图片的url是根目录下的，不是我打包后的 build文件夹下，所以会导致图片路径找不到的问题；因此这边有一点点没有完成的任务，希望有兴趣的童靴可以帮助完成~ 不过图片确实是已经打包好了，为了方便，我们还是提供github源码吧！如下所示：
+
+[https://github.com/tugenhua0707/webpack-url-loader](https://github.com/tugenhua0707/webpack-url-loader)
