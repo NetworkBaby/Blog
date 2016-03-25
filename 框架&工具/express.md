@@ -144,5 +144,126 @@ You can provide multiple callback functions that behave just like middleware, ex
 	  res.send('DELETE request to homepage');
 	});
 	
+#### app.disable(name)
+
+Sets the Boolean setting name to false, where name is one of the properties from the app settings table. Calling app.set('foo', false) for a Boolean property is the same as calling app.disable('foo').
+
+For example:
+
+	app.disable('trust proxy');
+	app.get('trust proxy');
+	// => false
+
+#### app.disabled(name)
+
+Returns true if the Boolean setting name is disabled (false), where name is one of the properties from the app settings table.
+
+	app.disabled('trust proxy');
+	// => true
+	
+	app.enable('trust proxy');
+	app.disabled('trust proxy');
+	// => false
+	
+#### app.enable(name)
+
+Sets the Boolean setting name to true, where name is one of the properties from the app settings table. Calling app.set('foo', true) for a Boolean property is the same as calling app.enable('foo').
+
+	app.enable('trust proxy');
+	app.get('trust proxy');
+	// => true
+
+#### app.enabled(name)
+
+Returns true if the setting name is enabled (true), where name is one of the properties from the app settings table.
+
+	app.enabled('trust proxy');
+	// => false
+	
+	app.enable('trust proxy');
+	app.enabled('trust proxy');
+	// => true
+
+#### app.engine(ext, callback)
+
+Registers the given template engine callback as ext.
+
+By default, Express will require() the engine based on the file extension. For example, if you try to render a “foo.jade” file, Express invokes the following internally, and caches the require() on subsequent calls to increase performance.
+
+	app.engine('jade', require('jade').__express);
+
+Use this method for engines that do not provide .__express out of the box, or if you wish to “map” a different extension to the template engine.
+
+For example, to map the EJS template engine to “.html” files:
+
+	app.engine('html', require('ejs').renderFile);
+
+In this case, EJS provides a .renderFile() method with the same signature that Express expects: (path, options, callback), though note that it aliases this method as ejs.__express internally so if you’re using “.ejs” extensions you don’t need to do anything.
+
+Some template engines do not follow this convention. The consolidate.js library maps Node template engines to follow this convention, so they work seemlessly with Express.
+	
+	var engines = require('consolidate');
+	app.engine('haml', engines.haml);
+	app.engine('html', engines.hogan);
+
+#### app.get(name)
+
+Returns the value of name app setting, where name is one of strings in the app settings table. For example:
+
+	app.get('title');
+	// => undefined
+	
+	app.set('title', 'My Site');
+	app.get('title');
+	// => "My Site"
+
+#### app.get(path, callback [, callback ...])
+
+Routes HTTP GET requests to the specified path with the specified callback functions. For more information, see the routing guide.
+
+You can provide multiple callback functions that behave just like middleware, except these callbacks can invoke next('route') to bypass the remaining route callback(s). You can use this mechanism to impose pre-conditions on a route, then pass control to subsequent routes if there’s no reason to proceed with the current route.
+	
+	app.get('/', function (req, res) {
+	  res.send('GET request to homepage');
+	});
+
+#### app.listen(port, [hostname], [backlog], [callback])
+
+Binds and listens for connections on the specified host and port. This method is identical to Node’s http.Server.listen().
+	
+	var express = require('express');
+	var app = express();
+	app.listen(3000);
+
+The app returned by express() is in fact a JavaScript Function, designed to be passed to Node’s HTTP servers as a callback to handle requests. This makes it easy to provide both HTTP and HTTPS versions of your app with the same code base, as the app does not inherit from these (it is simply a callback):
+	
+	var express = require('express');
+	var https = require('https');
+	var http = require('http');
+	var app = express();
+	
+	http.createServer(app).listen(80);
+	https.createServer(options, app).listen(443);
+
+The app.listen() method is a convenience method for the following (for HTTP only):
+	
+	app.listen = function() {
+	  var server = http.createServer(this);
+	  return server.listen.apply(server, arguments);
+	};
+	
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+	
