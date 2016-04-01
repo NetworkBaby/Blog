@@ -252,9 +252,195 @@ The app.listen() method is a convenience method for the following (for HTTP only
 	  return server.listen.apply(server, arguments);
 	};
 	
+#### app.param([name], callback)
+
+Add callback triggers to route parameters, where name is the name of the parameter or an array of them, and function is the callback function. The parameters of the callback function are the request object, the response object, the next middleware, and the value of the parameter, in that order.
+
+If name is an array, the callback trigger is registered for each parameter declared in it, in the order in which they are declared. Furthermore, for each declared parameter except the last one, a call to next inside the callback will call the callback for the next declared parameter. For the last parameter, a call to next will call the next middleware in place for the route currently being processed, just like it would if name were just a string.
+
+For example, when :user is present in a route path, you may map user loading logic to automatically provide req.user to the route, or perform validations on the parameter input.
+
+	app.param('user', function(req, res, next, id) {
+	
+	  // try to get the user details from the User model and attach it to the request object
+	  User.find(id, function(err, user) {
+	    if (err) {
+	      next(err);
+	    } else if (user) {
+	      req.user = user;
+	      next();
+	    } else {
+	      next(new Error('failed to load user'));
+	    }
+	  });
+	});
+
+Param callback functions are local to the router on which they are defined. They are not inherited by mounted apps or routers. Hence, param callbacks defined on app will be triggered only by route parameters defined on app routes.
+
+All param callbacks will be called before any handler of any route in which the param occurs, and they will each be called only once in a request-response cycle, even if the parameter is matched in multiple routes, as shown in the following examples.
+
+	app.param('id', function (req, res, next, id) {
+	  console.log('CALLED ONLY ONCE');
+	  next();
+	})
+	
+	app.get('/user/:id', function (req, res, next) {
+	  console.log('although this matches');
+	  next();
+	});
+	
+	app.get('/user/:id', function (req, res) {
+	  console.log('and this matches too');
+	  res.end();
+	});
+
+On GET /user/42, the following is printed:
+
+	CALLED ONLY ONCE
+	although this matches
+	and this matches too
 
 
+	app.param(['id', 'page'], function (req, res, next, value) {
+	  console.log('CALLED ONLY ONCE with', value);
+	  next();
+	})
+	
+	app.get('/user/:id/:page', function (req, res, next) {
+	  console.log('although this matches');
+	  next();
+	});
+	
+	app.get('/user/:id/:page', function (req, res) {
+	  console.log('and this matches too');
+	  res.end();
+	});
 
+On GET /user/42/3, the following is printed:
+
+	CALLED ONLY ONCE with 42
+	CALLED ONLY ONCE with 3
+	although this matches
+	and this matches too
+
+The behavior of the app.param(name, callback) method can be altered entirely by passing only a function to app.param(). This function is a custom implementation of how app.param(name, callback) should behave - it accepts two parameters and must return a middleware.
+
+The first parameter of this function is the name of the URL parameter that should be captured, the second parameter can be any JavaScript object which might be used for returning the middleware implementation.
+
+The middleware returned by the function decides the behavior of what happens when a URL parameter is captured.
+
+In this example, the app.param(name, callback) signature is modified to app.param(name, accessId). Instead of accepting a name and a callback, app.param() will now accept a name and a number.
+
+	var express = require('express');
+	var app = express();
+	
+	// customizing the behavior of app.param()
+	app.param(function(param, option) {
+	  return function (req, res, next, val) {
+	    if (val == option) {
+	      next();
+	    }
+	    else {
+	      res.sendStatus(403);
+	    }
+	  }
+	});
+	
+	// using the customized app.param()
+	app.param('id', 1337);
+	
+	// route to trigger the capture
+	app.get('/user/:id', function (req, res) {
+	  res.send('OK');
+	})
+	
+	app.listen(3000, function () {
+	  console.log('Ready');
+	})
+
+In this example, the app.param(name, callback) signature remains the same, but instead of a middleware callback, a custom data type checking function has been defined to validate the data type of the user id.
+
+	app.param(function(param, validator) {
+	  return function (req, res, next, val) {
+	    if (validator(val)) {
+	      next();
+	    }
+	    else {
+	      res.sendStatus(403);
+	    }
+	  }
+	})
+	
+	app.param('id', function (candidate) {
+	  return !isNaN(parseFloat(candidate)) && isFinite(candidate);
+	});
+	
+#### app.path()
+
+Returns the canonical path of the app, a string.
+
+	var app = express()
+	  , blog = express()
+	  , blogAdmin = express();
+	
+	app.use('/blog', blog);
+	blog.use('/admin', blogAdmin);
+	
+	console.log(app.path()); // ''
+	console.log(blog.path()); // '/blog'
+	console.log(blogAdmin.path()); // '/blog/admin'
+
+The behavior of this method can become very complicated in complex cases of mounted apps: it is usually better to use req.baseUrl to get the canonical path of the app.
+
+#### app.post(path, callback [, callback ...])
+
+Routes HTTP POST requests to the specified path with the specified callback functions. For more information, see the routing guide.
+
+You can provide multiple callback functions that behave just like middleware, except that these callbacks can invoke next('route') to bypass the remaining route callback(s). You can use this mechanism to impose pre-conditions on a route, then pass control to subsequent routes if there’s no reason to proceed with the current route.
+
+	app.post('/', function (req, res) {
+	  res.send('POST request to homepage');
+	});
+
+#### app.put(path, callback [, callback ...])
+
+Routes HTTP PUT requests to the specified path with the specified callback functions. For more information, see the routing guide.
+
+You can provide multiple callback functions that behave just like middleware, except that these callbacks can invoke next('route') to bypass the remaining route callback(s). You can use this mechanism to impose pre-conditions on a route, then pass control to subsequent routes if there’s no reason to proceed with the current route.
+
+	app.put('/', function (req, res) {
+	  res.send('PUT request to homepage');
+	});
+
+#### app.render(view, [locals], callback)
+
+Returns the rendered HTML of a view via the callback function. It accepts an optional parameter that is an object containing local variables for the view. It is like res.render(), except it cannot send the rendered view to the client on its own.
+
+	app.render('email', function(err, html){
+	  // ...
+	});
+	
+	app.render('email', { name: 'Tobi' }, function(err, html){
+	  // ...
+	});
+
+#### app.route(path)
+
+Returns an instance of a single route, which you can then use to handle HTTP verbs with optional middleware. Use app.route() to avoid duplicate route names (and thus typo errors).
+
+	var app = express();
+	
+	app.route('/events')
+	.all(function(req, res, next) {
+	  // runs for all HTTP verbs first
+	  // think of it as route specific middleware!
+	})
+	.get(function(req, res, next) {
+	  res.json(...);
+	})
+	.post(function(req, res, next) {
+	  // maybe add a new event...
+	})
 
 
 
