@@ -94,6 +94,44 @@ a标签，修改了a标签的默认事件，故当a标签链接为空时阻止�
 
 ng-form或者form，已被angular改写。ng-model双向绑定input等元素，myForm.personEmail.$valid判断是否合法，myForm.personEmail.$error判断具体错误，ng-disabled="myForm.$invalid"判断表单是否可以提交，ng-submit="save()"提交执行的函数。
 
+#### input
+
+属性：ng-model/name/required/ng-required/ng-minlength/ng-maxlength/ng-pattern/ng-change/ng-trim/ng-true-value/ng-false-value/ng-pattern
+
+#### ng-app
+
+angular应用，管理页面
+
+#### ng-bind
+
+绑定数据在页面上
+
+#### ng-bind-html
+
+绑定html元素在页面上
+
+#### ng-bind-template
+
+绑定模板
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
