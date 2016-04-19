@@ -114,10 +114,77 @@ angular应用，管理页面
 
 绑定模板
 
+#### ng-blur
 
+失去焦点后执行
 
+#### ng-change
 
+改变内容后执行
 
+#### ng-checked
+
+选中后执行
+
+#### ng-class
+
+	ng-class {'selected': isSelected, 'car': isCar}"
+
+#### ng-class-even
+
+偶数个应用此类
+
+#### ng-class-odd
+
+基数个应用此类
+
+#### ng-click
+
+点击事件
+
+#### ng-cloak
+
+防止绑定的模板闪烁
+
+#### ng-controller
+
+控制器
+
+#### ng-copy
+
+深拷贝
+
+#### ng-dblclick
+
+双击事件
+
+#### ng-disabled
+
+控制失效状态
+
+#### ng-focus
+
+获得焦点
+
+#### ng-form
+
+#### ng-hide
+
+隐藏
+
+#### ng-href
+
+链接中有参数时用
+
+#### ng-if
+
+通过删除或新增节点
+
+#### ng-include
+
+引入html文件
+
+#### 
 
 
 
