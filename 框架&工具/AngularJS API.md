@@ -184,7 +184,103 @@ angular应用，管理页面
 
 引入html文件
 
-#### 
+#### ng-init
+
+可以初始化变量、对象、数组
+
+#### ng-keydown
+
+键盘按下事件
+
+#### ng-keypress
+
+键盘按下事件
+
+#### ng-keyup
+
+键盘松开事件
+
+#### ng-list
+
+绑定在input，将字符串转换为数组，用逗号隔开
+
+#### ng-model
+
+实现双向绑定
+
+#### ng-model-options
+
+规定什么时候刷新数据
+
+#### ng-mousedown
+
+鼠标按下事件
+
+#### ng-mouseenter
+
+鼠标移入事件
+
+#### ng-mouseleave
+
+鼠标移出事件
+
+#### ng-mousemove
+
+鼠标移动事件
+
+#### ng-mouseup
+
+鼠标松开事件
+
+#### ng-non-bindable
+
+对表达式不执行，绑定无效
+
+#### ng-open
+
+显示可见或者不可见
+
+#### ng-paste
+
+粘贴
+
+#### ng-pluralize
+
+#### ng-readonly
+
+只读状态
+
+#### ng-repeat
+
+循环数组或者对象
+
+#### ng-selected
+
+选中
+
+#### ng-show
+
+显示
+
+#### ng-src
+
+路径，可以增加表达式
+
+#### ng-style
+
+样式改变
+
+#### ng-submit
+
+提交前执行
+
+#### ng-switch
+
+可以根据ng-switch-when、ng-default选择
+
+#### ng-value
+
+设置input/select的value值
 
 
 
