@@ -19,7 +19,7 @@
 - /d 当前日期
 
 
-### 2、安装java
+### 2、安装jdk
 
 #### 2.1、Installing default JRE/JDK
 ```
@@ -115,11 +115,49 @@ svnadmin create /home/svn/project
 
 可以看到有一个端口为3690的地址，表示启动成功
 
-#### 7.8、局域网访问，checkout出来SVN库的文件
+#### 7.6、局域网访问，checkout出来SVN库的文件
 
 `svn checkout svn://svnIp地址/project`
 
 或者简写为： 
 
 `svn co svn://svnIp地址/project`
+
+### 8、安装node
+
+#### 8.1、下载
+
+[https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+
+Linux Binaries (.tar.xz)
+
+解压：xz -d >  tar -xvf
+
+#### 8.2、软链接方式
+
+`ln -s /software/node-v4.4.7-linux-x64/bin/node /usr/local/bin/node`
+`ln -s /software/node-v4.4.7-linux-x64/bin/npm /usr/local/bin/npm`
+
+### 9、安装mongo
+
+`apt-get install mongodb-clients mongodb-server mongodb mongodb-dev`
+
+#### 9.1、权限控制
+
+`vim /etc/mongodb.conf`
+
+auth=true
+
+#bind_ip = 127.0.0.1
+
+#port = 27017
+
+### 9.2、创建用户
+
+`use admin`
+
+`db.addUser`
+
+`db.createUser`
+
  
