@@ -11,3 +11,7 @@ iptables --line-numbers --list PREROUTING -t nat
 **删除**
 
 iptables -t nat -D PREROUTING 1
+
+**更换npm下载路径**
+
+npm config set registry http://registry.cnpmjs.org  npm info underscore
