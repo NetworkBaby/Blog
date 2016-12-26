@@ -452,13 +452,4 @@ Retrieve the value of a setting with app.get().
 	
 	app.set('title', 'My Site');
 	app.get('title'); // "My Site"
-
-
-
-
-
-
-
-
-
 	
