@@ -38,3 +38,15 @@ fetch被定义在BOM的window对象中，该方法返回的是一个promise对�
     fetch(request).then(function(response) {
         console.log(response.headers);
     });
+    
+发送一个post请求
+
+    var request = new Request(URL, {method: 'POST',body: 'a=b&c=d'});
+    
+    fetch(request).then(function(response){
+        console.log(response.json());
+        return response.json();
+    }).then(function(json){
+        return json;
+    });
+    
