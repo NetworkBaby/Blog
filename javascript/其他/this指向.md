@@ -110,4 +110,31 @@
     var test = new Test();
     test.fn();
 
+你可以用bind来代替任何一个函数或者方法的this，即便它没有赋值给实例的初始prototype
     
+    function Test(){}
+    
+    Test.prototype.a = "a";
+    
+    function log(){
+        console.log(this.a);
+    }
+    
+    var test = new Test();
+    log.bind(test)();   //a
+    log.apply(test);    //a
+    log.call(test);     //a
+    log();              //undefined
+    
+### 对象this
+
+在一个对象中，如果有一个属性为函数，那么在函数里面可以用this引用该对象的其他属性。
+
+    var obj = {
+        a: "a",
+        fn: function(){
+            console.log(this.a);
+        }
+    }
+    
+    obj.fn();   //a
