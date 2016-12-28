@@ -138,3 +138,55 @@
     }
     
     obj.fn();   //a
+    
+当使用以下方式时，this不会越出当前对象，只有相同直接父元素的属性才能通过this共享变量
+
+    var obj = {
+        a: "a",
+        fn: {
+            inside: function(){
+                console.log(this);
+            }
+        }
+    }
+    
+    obj.fn.inside();    //undefined
+    
+### DOM 对象this
+
+在一个事件处理函数中，this始终指代这个处理函数所绑定的DOM节点中。
+
+    function Listener(){
+        document.querySelector('#test').addEventListener('click', this.handerClick);
+    }
+    
+    Listener.prototype.handerClick = function(){
+        console.log(this);
+    }
+    
+    var listener = new Listener();
+    document.quertSelector('#test').click();    //id为test的dom节点
+    
+还可以手动切换上下文
+
+    function Listener(){
+        document.querySelector('#test').addEventListener('click', this.handerClick.bind(this));
+    }
+    
+    Listener.prototype.handerClick = function(){
+        console.log(this);
+    }
+    
+    var listener = new Listener();
+    document.quertSelector('#test').click();    //Listener {handleClick: function}
+    
+### HTML this
+
+html节点中放置的javascript，this指向了这个元素
+
+    <div id="test" onclick="console.log(this);"></div>
+    <script>
+        document.querySelector('#test').click();    //<div id="test"></div>
+    </script>
+
+
