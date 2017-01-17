@@ -90,7 +90,7 @@ export JRE_HOME=$JAVA_HOME/jre
 
 svnadmin create /home/svn/project
 
-#### 7.4、访问权限设置 
+#### 7.4、访问权限设置
 
 修改 `/home/xiaozhe/svn/mypro/conf`目录下： 
 `svnserve.conf` 、`passwd` 个文件，行最前端不允许有空格 
