@@ -138,6 +138,14 @@ Linux Binaries (.tar.xz)
 `ln -s /software/node-v4.4.7-linux-x64/bin/node /usr/local/bin/node`
 `ln -s /software/node-v4.4.7-linux-x64/bin/npm /usr/local/bin/npm`
 
+#### 8.3、源码安装
+
+    $ tar xvf node-v0.10.36.tar.gz 
+    $ cd node-v0.10.36 
+    $ ./configure 
+    $ make 
+    $ make install 
+
 ### 9、安装mongo
 
 `apt-get install mongodb-clients mongodb-server mongodb mongodb-dev`
