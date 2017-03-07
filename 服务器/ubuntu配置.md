@@ -174,4 +174,24 @@ auth=true
 
 	sudo apt-get install nginx
 
+#### 10.2、配置nginx.conf
+
+- 1）cd /etc/nginx
+- 2）vim nginx.conf
+- 3）http下增加
+	
+		server {
+			listen       80;
+			server_name  域名;
+			location / {
+				proxy_connect_timeout   900;
+				proxy_send_timeout      900;
+				proxy_read_timeout      900;
+				proxy_pass http://127.0.0.1:3001;
+				proxy_set_header  X-Real-IP  $remote_addr;
+				proxy_set_header Host $host:$server_port;
+				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			}
+		}
+
  
