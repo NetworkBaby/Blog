@@ -160,12 +160,18 @@ auth=true
 
 #port = 27017
 
-### 9.2、创建用户
+#### 9.2、创建用户
 
 `use admin`
 
 `db.addUser`
 
 `db.createUser`
+
+### 10、安装、配置nginx
+
+#### 10.1、apt-get安装
+
+	sudo apt-get install nginx
 
  
