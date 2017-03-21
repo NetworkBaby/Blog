@@ -48,8 +48,33 @@
 
 ### 四、assert.doesNotThrow(block[, error][, message])
 	
+	assert.doesNotThrow(
+	  () => {
+	    throw new TypeError('错误');
+	  },
+	  SyntaxError
+	);
+
+两个错误相同，抛出`AssertionError: Got unwanted exception (ReferenceError)..[(message)]`；两个错误不相同时，抛出第一个错误，message无用。
 
 
+### 五、assert.equal(actual, expected[, message])
+
+同二，不深度相等。例如不同对象即使值一样也不等。
+
+
+### 六、assert.fail(actual, expected, message, operator)
+
+抛出错误`AssertionError: actual operator expected`
+
+
+### 七、assert.ifError(value)
+
+如果value为真，则抛出value
+
+
+
+	
 
 
 	
