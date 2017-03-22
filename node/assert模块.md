@@ -70,7 +70,50 @@
 
 ### 七、assert.ifError(value)
 
-如果value为真，则抛出value
+如果value为真，则抛出value；为假，则通过。
+
+
+### 八、assert.notDeepEqual(actual, expected[, message])
+
+与deepEqual相反
+
+
+### 九、assert.notDeepStrictEqual(actual, expected[, message])
+
+与deepStrictEqual相反
+
+
+### 十、assert.notEqual(actual, expected[, message])
+
+与equal相反，相当于`!=`
+
+
+### 十一、assert.notStrictEqual(actual, expected[, message])
+
+相当于`!==`
+
+
+### 十二、assert.ok(value[, message])
+
+相当于`assert.equal(!!value, true, message)`
+
+
+### 十三、assert.strictEqual(actual, expected[, message])
+
+
+相当有`===`
+
+
+### 十四、assert.throws(block[, error][, message])
+
+期望 block 函数抛出错误。
+
+如果指定了 error，error 可以是构造函数、正则表达式、或自定义的验证函数。
+
+如果指定了 message，则当 block 不抛出错误时，message 会作为 AssertionError 的错误信息。
+
+注意，error 不能是一个字符串。 如果第二个参数是一个字符串，则视为省略 error 参数，传入的字符串会被用于 message。
+
 
 
 
